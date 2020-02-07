@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
  Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -67,6 +67,8 @@ class OSRMotionControl:
 	def load_controllers(self):
 		""" Initializes the controllers.  """
 		rospy.loginfo("Loading controllers...")
+		time.sleep(1)
+		rospy.loginfo("Controllers existing" + str(rospy.get_published_topics()))
 		for controller in self.publishers:
 			rospy.loginfo("Loading controller "+str(controller))
 			topic = "/"+self.controller_ns+"/"+controller+"/"+self.controller_command
@@ -107,6 +109,7 @@ class OSRMotionControl:
 			turn_angle_radians = self.constant_turn_angle_in_radians*-1
 		elif (angular_velocity>0):
 			turn_angle_radians = self.constant_turn_angle_in_radians
+		
 		
 		self.send_steering_command([turn_angle_radians*-1, 
 			turn_angle_radians, 

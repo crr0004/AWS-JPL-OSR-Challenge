@@ -4,6 +4,7 @@
   <!-- All joints except wheels should be revolute eventually with limits put in, instead
   of continous joints -->
 
+    
   <!-- Body -->
   <link name="body">
     <inertial>

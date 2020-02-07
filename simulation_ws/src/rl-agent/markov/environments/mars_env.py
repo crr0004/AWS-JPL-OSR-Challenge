@@ -22,6 +22,7 @@ from geometry_msgs.msg import Point
 from std_msgs.msg import Float64
 from std_msgs.msg import String
 from PIL import Image
+from std_srvs.srv import Empty
 import queue
 
 
@@ -120,6 +121,7 @@ class MarsEnv(gym.Env):
         # Gazebo model state
         self.gazebo_model_state_service = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
         self.gazebo_model_configuration_service = rospy.ServiceProxy('/gazebo/set_model_configuration', SetModelConfiguration)
+        self.reset_models = rospy.ServiceProxy('/gazebo/reset_world', Empty)
         rospy.init_node('rl_coach', anonymous=True)
 
         # Subscribe to ROS topics and register callbacks
@@ -160,7 +162,7 @@ class MarsEnv(gym.Env):
     def reset(self):
         print('Total Episodic Reward=%.2f' % self.reward_in_episode,
               'Total Episodic Steps=%.2f' % self.steps)
-        self.send_reward_to_cloudwatch(self.reward_in_episode)
+        #self.send_reward_to_cloudwatch(self.reward_in_episode)
 
         # Reset global episodic values
         self.reward = None
@@ -234,10 +236,11 @@ class MarsEnv(gym.Env):
                             "corner_rb_wheel_rb",
                             "imu_wheel_rb_joint"]
         # Angle to reset joints to
-        joint_positions_list = [0 for _ in range(len(joint_names_list))]
+        joint_positions_list = [0.0 for _ in range(len(joint_names_list))]
 
-        self.gazebo_model_state_service(model_state)
-        self.gazebo_model_configuration_service(model_name='rover', urdf_param_name='rover_description', joint_names=joint_names_list, joint_positions=joint_positions_list)
+        #self.gazebo_model_state_service(model_state)
+        #self.gazebo_model_configuration_service(model_name='rover', urdf_param_name='rover_description', joint_names=joint_names_list, joint_positions=joint_positions_list)
+        self.reset_models()
 
         self.last_collision_threshold = sys.maxsize
         self.last_position_x = self.x

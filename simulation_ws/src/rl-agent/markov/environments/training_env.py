@@ -163,7 +163,7 @@ class RoverTrainingGroundsEnv(gym.Env):
     def reset(self):
         print('Total Episodic Reward=%.2f' % self.reward_in_episode,
               'Total Episodic Steps=%.2f' % self.steps)
-        self.send_reward_to_cloudwatch(self.reward_in_episode)
+        #self.send_reward_to_cloudwatch(self.reward_in_episode)
 
         # Reset global episodic values
         self.reward = None

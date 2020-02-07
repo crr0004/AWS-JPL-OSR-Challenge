@@ -1,0 +1,27 @@
+FROM ros:melodic
+
+WORKDIR /app
+ENV ROS_DISTRO=melodic
+
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable bionic main" > /etc/apt/sources.list.d/gazebo-stable.list'
+
+RUN apt-get update -y && apt-get install wget -y
+
+RUN wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+
+RUN apt-get update -y && apt-get install -y gazebo9 libgazebo9-dev build-essential xvfb x11vnc net-tools x11-xserver-utils jwm python3.6-venv python3-pip cmake python3-colcon-common-extensions ros-melodic-desktop-full
+
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+
+COPY simulation_ws ./
+
+#sudo
+RUN pip3 install -U pip
+RUN pip3 install -U setuptools awscli colcon-common-extensions colcon-ros-bundle boto3 src/rl-agent/
+
+RUN rosdep update && rosdep install --from-paths src --ignore-src --rosdistro=melodic -r -y
+RUN bash -c "source /opt/ros/$ROS_DISTRO/setup.sh && colcon build"
+
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["./run.sh mars_full_sim.launch"]
