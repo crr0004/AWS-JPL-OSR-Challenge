@@ -5,7 +5,9 @@ RUN echo "deb [arch=amd64] http://repo.radeon.com/rocm/apt/debian/ xenial main" 
 
 
 RUN apt-get update -y && apt-get install -y rocm-dev rocm-libs miopen-hip cxlactivitylogger rccl python3-dev libelf1
-RUN pip3 uninstall -y tensorflow && pip3 install "tensorflow-rocm==1.14.5"
+RUN pip3 uninstall -y tensorflow && pip3 install "tensorflow-rocm==1.14.5" jupyter
+
+RUN apt-get clean && rm -rf ~/.cache/pip
 
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["./run.sh mars_full_sim.launch"]
