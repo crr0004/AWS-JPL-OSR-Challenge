@@ -1,5 +1,12 @@
-![header image](images/2.png)
+# Local Command Dump
+```
+MINIO_ACCESS_KEY=minio MINIO_SECRET_KEY=miniokey123 ./minio server minio_data/
+docker run -d --rm --name jpl-amd  --env-file docker.env --device /dev/kfd:/dev/kfd --device /dev/dri:/dev/dri -v $(pwd)/simulation_ws/src:/app/src -p 9090 -p 5900 crr0004/awsjplosr:jupyter-amd "source install/setup.sh && src/run_vnc.sh && roslaunch mars mars_env_only.launch"
+docker exec -it jpl-amd "source install/setup.sh; cd src; jupyter notebook --allow-root --ip \$(hostname -i) --port 9090 --no-browser"
 
+
+
+```
 
 ## Welcome to the AWS-JPL Open Source Rover Challenge repository.
 
