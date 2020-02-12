@@ -16,7 +16,7 @@ from markov import environments
 # Graph Scheduling #
 ####################
 schedule_params = ScheduleParameters()
-schedule_params.improve_steps = TrainingSteps(100000)       #Changing to 100K
+schedule_params.improve_steps = TrainingSteps(1)       #Changing to 100K
 schedule_params.steps_between_evaluation_periods = EnvironmentEpisodes(40)
 schedule_params.evaluation_steps = EnvironmentEpisodes(5)
 schedule_params.heatup_steps = EnvironmentSteps(0)
@@ -28,8 +28,10 @@ agent_params = ClippedPPOAgentParameters()
 
 agent_params.network_wrappers['main'].learning_rate = 0.0003
 agent_params.network_wrappers['main'].input_embedders_parameters['observation'].activation_function = 'relu'
+agent_params.network_wrappers['main'].input_embedders_parameters['observation'].batchnorm = True
+agent_params.network_wrappers['main'].input_embedders_parameters['observation'].dropout_rate = 0.2
 agent_params.network_wrappers['main'].middleware_parameters.activation_function = 'relu'
-agent_params.network_wrappers['main'].batch_size = 64
+agent_params.network_wrappers['main'].batch_size = 96
 agent_params.network_wrappers['main'].optimizer_epsilon = 1e-5
 agent_params.network_wrappers['main'].adam_optimizer_beta2 = 0.999
 
@@ -37,11 +39,11 @@ agent_params.algorithm.clip_likelihood_ratio_using_epsilon = 0.2
 agent_params.algorithm.clipping_decay_schedule = LinearSchedule(1.0, 0, 1000000)
 agent_params.algorithm.beta_entropy = 0.01
 agent_params.algorithm.gae_lambda = 0.95
-agent_params.algorithm.discount = 0.999
-agent_params.algorithm.optimization_epochs = 10
+agent_params.algorithm.discount = 0.90
+agent_params.algorithm.optimization_epochs = 5
 agent_params.algorithm.estimate_state_value_using_gae = True
-agent_params.algorithm.num_steps_between_copying_online_weights_to_target = EnvironmentEpisodes(20)
-agent_params.algorithm.num_consecutive_playing_steps = EnvironmentEpisodes(20)
+agent_params.algorithm.num_steps_between_copying_online_weights_to_target = EnvironmentEpisodes(10)
+agent_params.algorithm.num_consecutive_playing_steps = EnvironmentEpisodes(10)
 agent_params.exploration = CategoricalParameters()
 agent_params.memory.max_size = (MemoryGranularity.Transitions, 10**5)
 
@@ -60,6 +62,7 @@ vis_params = VisualizationParameters()
 vis_params.dump_csv = True
 vis_params.dump_signals_to_csv_every_x_episodes = 1
 vis_params.tensorboard = True
+vis_params.print_networks_summary = True
 
 ########
 # Test #

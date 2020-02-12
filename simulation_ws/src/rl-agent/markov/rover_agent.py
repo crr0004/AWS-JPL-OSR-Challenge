@@ -91,6 +91,7 @@ def main():
     task_parameters = TaskParameters(framework_type=Frameworks.tensorflow,
                                      checkpoint_save_secs=args.checkpoint_save_secs)
     task_parameters.__dict__['checkpoint_save_dir'] = args.local_model_directory
+    task_parameters.__dict__['checkpoint_restore_dir'] = args.local_model_directory
     task_parameters.__dict__ = add_items_to_dict(task_parameters.__dict__, args.__dict__)
 
     data_store_params_instance = S3BotoDataStoreParameters(bucket_name=args.model_s3_bucket,

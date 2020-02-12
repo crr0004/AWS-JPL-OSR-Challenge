@@ -32,7 +32,7 @@ TRAINING_IMAGE_HEIGHT = 120
 TRAINING_IMAGE_SIZE = (TRAINING_IMAGE_WIDTH, TRAINING_IMAGE_HEIGHT)
 
 LIDAR_SCAN_MAX_DISTANCE = 4.5  # Max distance Lidar scanner can measure
-CRASH_DISTANCE = 0.49  # Min distance to obstacle (The LIDAR is in the center of the 1M Rover)
+CRASH_DISTANCE = 0.6  # Min distance to obstacle (The LIDAR is in the center of the 1M Rover)
 
 # Size of the image queue buffer, we want this to be one so that we consume 1 image
 # at a time, but may want to change this as we add more algorithms
@@ -327,6 +327,7 @@ class MarsEnv(gym.Env):
             avg_imu = (self.max_lin_accel_x + self.max_lin_accel_y + self.max_lin_accel_y) / 3
         else:
             avg_imu = 0
+        self.avg_imu = avg_imu
     
         print('Step:%.2f' % self.steps,
               'Steering:%f' % action[0],
@@ -336,7 +337,9 @@ class MarsEnv(gym.Env):
               'CT:%.2f' % self.collision_threshold,             # Collision Threshold
               'CTCP:%f' % self.closer_to_checkpoint,            # Is closer to checkpoint
               'PSR: %f' % self.power_supply_range,              # Steps remaining in Episode
-              'IMU: %f' % avg_imu)
+              'IMU: %f' % avg_imu,
+              'X, Y: {}, {}'.format(self.x, self.y)
+             )
 
         self.reward = reward
         self.done = done
@@ -402,6 +405,9 @@ class MarsEnv(gym.Env):
             if self.collision_threshold <= CRASH_DISTANCE:
                 print("Rover has sustained sideswipe damage")
                 return 0, True # No reward
+            
+            if self.avg_imu > 10:
+                return 0, True
             
             # Have the gravity sensors registered too much G-force
             if self.collision:
